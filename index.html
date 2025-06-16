@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Interativo de Análise Semântica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header id="main-header" class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-slate-900">Análise Semântica</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Início</a>
+                        <a href="#grammars" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Gramáticas</a>
+                        <a href="#symbol-table" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Tabela de Símbolos</a>
+                        <a href="#scope" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Escopo</a>
+                        <a href="#type-checking" class="nav-link px-3 py-2 rounded-md text-sm font-medium">Checagem de Tipos</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <section id="intro" class="py-12 text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Além da Estrutura: A Busca por Significado</h2>
+            <p class="mt-4 max-w-3xl mx-auto text-lg leading-7 text-slate-600">
+                A análise léxica e sintática verificam se um programa está escrito corretamente, mas não se ele faz sentido. A análise semântica é a fase do compilador que preenche essa lacuna, garantindo que o código seja não apenas sintaticamente válido, mas também logicamente coerente. Ela verifica regras de tipo, escopo de variáveis e a consistência geral do programa antes de gerar o código final.
+            </p>
+             <div class="mt-10">
+                <h3 class="text-xl font-semibold mb-4 text-slate-800">Componentes da Análise Semântica</h3>
+                 <div class="chart-container">
+                    <canvas id="semanticAnalysisChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-slate-500">Esta visualização mostra como as principais tarefas da análise semântica se distribuem conceitualmente.</p>
+            </div>
+        </section>
+
+        <section id="grammars" class="py-16 bg-white rounded-xl shadow-lg my-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-slate-900">O Motor da Semântica: Gramáticas de Atributos</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                        Para dar significado à estrutura sintática, os compiladores usam Gramáticas de Atributos. Elas associam regras (ações semânticas) e valores (atributos) a cada parte da gramática, permitindo que a informação, como o tipo de uma variável, flua pela árvore de análise.
+                    </p>
+                </div>
+
+                <div class="mt-10">
+                    <div class="flex justify-center border-b border-slate-200">
+                        <button class="tab active py-2 px-4 font-medium text-slate-500 hover:text-green-700 focus:outline-none" data-tab="s-attributed">S-Atribuídas</button>
+                        <button class="tab py-2 px-4 font-medium text-slate-500 hover:text-green-700 focus:outline-none" data-tab="l-attributed">L-Atribuídas</button>
+                        <button class="tab py-2 px-4 font-medium text-slate-500 hover:text-green-700 focus:outline-none" data-tab="non-l-attributed">Não L-Atribuídas</button>
+                    </div>
+
+                    <div id="s-attributed" class="tab-content mt-8">
+                        <h3 class="text-2xl font-semibold text-slate-800">Fluxo de Baixo para Cima: Atributos Sintetizados</h3>
+                        <p class="mt-2 text-slate-600">
+                            Usam apenas atributos sintetizados, onde o valor de um nó pai é calculado a partir de seus filhos. A informação sobe na árvore de análise. É o tipo mais simples de gramática de atributos.
+                        </p>
+                        <div class="mt-6 p-6 bg-slate-50 rounded-lg border border-slate-200">
+                            <p class="font-mono text-center text-lg">Exemplo: `número → número₁ dígito { número.val = número₁.val * 10 + dígito.val }`</p>
+                            <p class="text-center mt-2 text-slate-500">O valor do número é construído a partir dos valores dos dígitos individuais, de baixo para cima.</p>
+                        </div>
+                    </div>
+
+                    <div id="l-attributed" class="tab-content hidden mt-8">
+                        <h3 class="text-2xl font-semibold text-slate-800">Fluxo Flexível: O Padrão da Indústria</h3>
+                        <p class="mt-2 text-slate-600">
+                            Permitem atributos sintetizados e herdados, mas com uma regra: um atributo herdado só pode depender de irmãos à sua esquerda ou de seu pai. Isso se alinha perfeitamente com os analisadores que leem o código da esquerda para a direita, tornando a compilação em uma única passagem viável.
+                        </p>
+                         <div class="mt-6 p-6 bg-slate-50 rounded-lg border border-slate-200">
+                            <p class="font-mono text-center text-lg">Exemplo: `decl → tipo var-lista { var-lista.tipo = tipo.tipo }`</p>
+                            <p class="text-center mt-2 text-slate-500">O tipo (`int`, `float`) é passado do nó `tipo` para o nó `var-lista` (da esquerda para a direita) para ser usado na declaração das variáveis.</p>
+                        </div>
+                    </div>
+                    
+                    <div id="non-l-attributed" class="tab-content hidden mt-8">
+                        <h3 class="text-2xl font-semibold text-slate-800">O Desafio: Dependências à Direita</h3>
+                        <p class="mt-2 text-slate-600">
+                            Ocorrem quando um atributo depende de um irmão à sua direita. Isso quebra o modelo de processamento da esquerda para a direita, exigindo múltiplas passagens ou técnicas complexas, tornando a implementação do compilador mais difícil.
+                        </p>
+                         <div class="mt-6 p-6 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="font-mono text-center text-lg">Exemplo: `expr → num base { num.base = base.valor }`</p>
+                            <p class="text-center mt-2 text-red-700">Aqui, para validar os dígitos em `num`, precisaríamos saber a `base`, que só é processada depois. Isso cria um problema de dependência.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="symbol-table" class="py-16">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900">A Memória do Compilador: Tabela de Símbolos</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                    É a estrutura de dados central que armazena informações sobre todos os identificadores do programa (variáveis, funções, etc.), como seu tipo, escopo e endereço. É essencial para verificar se uma variável foi declarada e se está sendo usada corretamente.
+                </p>
+            </div>
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="p-6 bg-white rounded-xl shadow-lg">
+                    <h3 class="font-semibold text-lg mb-4">Simulador de Tabela de Símbolos</h3>
+                    <div class="code-block" id="symbolTableCode"></div>
+                    <div class="mt-4 flex justify-center">
+                        <button id="symbolTableStepBtn" class="bg-green-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-800 transition-colors shadow-md">Próximo Passo</button>
+                    </div>
+                </div>
+                <div class="p-6 bg-slate-100 rounded-xl border border-slate-200">
+                     <h3 class="font-semibold text-lg mb-4">Estado da Tabela de Símbolos (Escopo Atual)</h3>
+                    <div id="symbolTableVisual" class="min-h-[200px] p-4 bg-white rounded-md border border-slate-200">
+                        <p class="text-slate-400">Clique em "Próximo Passo" para começar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="scope" class="py-16 bg-white rounded-xl shadow-lg my-12">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900">Gerenciando Contexto: Escopo e Sombreamento</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                    O escopo define onde no código uma variável é acessível. O sombreamento (shadowing) ocorre quando uma variável interna "esconde" uma externa com o mesmo nome. O compilador usa uma pilha de tabelas de símbolos para gerenciar isso: a declaração mais interna (no topo da pilha) é sempre a encontrada primeiro.
+                </p>
+            </div>
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div class="p-6 bg-slate-50 rounded-xl border border-slate-200">
+                    <h3 class="font-semibold text-lg mb-4">Analisador de Escopo</h3>
+                    <div class="code-block" id="scopeCode"></div>
+                     <div class="mt-4 flex justify-center">
+                        <button id="scopeStepBtn" class="bg-green-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-800 transition-colors shadow-md">Próximo Passo</button>
+                    </div>
+                </div>
+                <div class="p-6 bg-green-50 border border-green-200 rounded-xl">
+                     <h3 class="font-semibold text-lg mb-4 text-green-900">Estado das Variáveis</h3>
+                     <div id="scopeVisual" class="space-y-4">
+                        <p class="text-slate-400">Clique em "Próximo Passo" para começar a análise.</p>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="type-checking" class="py-16">
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-slate-900">Garantindo a Correção: Checagem de Tipos</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-600">
+                    Esta é talvez a tarefa mais importante da análise semântica. Ela garante que as operações sejam aplicadas a tipos de dados compatíveis, evitando erros em tempo de execução. Linguagens com tipagem estática (como Java e C) realizam essa verificação durante a compilação.
+                </p>
+            </div>
+             <div class="mt-10 max-w-2xl mx-auto p-8 bg-white rounded-xl shadow-lg">
+                <h3 class="text-xl font-semibold text-center mb-6">Calculadora de Compatibilidade de Tipos</h3>
+                <div class="grid grid-cols-3 gap-4 items-center">
+                    <select id="type1" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300 focus:ring-opacity-50 p-2">
+                        <option>int</option>
+                        <option>float</option>
+                        <option>boolean</option>
+                        <option>string</option>
+                    </select>
+                    <select id="operator" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300 focus:ring-opacity-50 p-2 text-center">
+                        <option>+</option>
+                        <option>==</option>
+                    </select>
+                    <select id="type2" class="block w-full rounded-md border-slate-300 shadow-sm focus:border-green-500 focus:ring focus:ring-green-300 focus:ring-opacity-50 p-2">
+                        <option>int</option>
+                        <option>float</option>
+                        <option>boolean</option>
+                        <option>string</option>
+                    </select>
+                </div>
+                <div id="typeResult" class="mt-6 text-center text-lg font-mono p-4 rounded-md">
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center text-sm">
+            <p>Guia Interativo de Análise Semântica. Criado para fins educacionais.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
